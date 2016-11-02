@@ -3,17 +3,6 @@
 #define btn2  10  // 버튼2의 아두이노 핀번호 정의
 #define btn3  9   // 버튼3의 아두이노 핀번호 정의
 #define btn4  8   // 버튼4의 아두이노 핀번호 정의
-#define btn5  7   // 버튼5의 아두이노 핀번호 정의
-#define btn6  6   // 버튼6의 아두이노 핀번호 정의
-#define btn7  5   // 버튼7의 아두이노 핀번호 정의
-// 3:midi rx , 4:midi reset  아두이노 핀 3번 4번은 이미 사용중
-#define btn8  2   // 버튼8의 아두이노 핀번호 정의 
-                  //(SoftSerial에서 Rx핀으로 선언되지만 재 세팅 후 버튼용으로 사용)
-#define btn9 A5   // 버튼9의 아두이노 핀번호 정의
-#define btn10 A4  // 버튼10의 아두이노 핀번호 정의
-#define btn11 A3  // 버튼11의 아두이노 핀번호 정의
-#define btn12 A2  // 버튼12의 아두이노 핀번호 정의
-
 #define defaultPatch 15 //악기 초기화 버튼 설정 악기번호
 
 SoftwareSerial mySerial(2, 3); //SW시리얼핀 정의 D3이 MIDI신호 전송용,  D2는 미사용 
@@ -26,27 +15,11 @@ boolean bs1 = false;  // 버튼1의 현재상태(눌림 or 안눌림)
 boolean bs2 = false;  // 이하, 위와 유사
 boolean bs3 = false;
 boolean bs4 = false;
-boolean bs5 = false;
-boolean bs6 = false;
-boolean bs7 = false;
-boolean bs8 = false;
-boolean bs9 = false;
-boolean bs10 = false;
-boolean bs11 = false;
-boolean bs12 = false;
 
 boolean br1;  // 버튼1 상태 확인용 입력값 임시저장용
 boolean br2;  // 이하, 위와 유사
 boolean br3;
 boolean br4;
-boolean br5;
-boolean br6;
-boolean br7;
-boolean br8;
-boolean br9;
-boolean br10;
-boolean br11;
-boolean br12;
 
 int patch = 0; //악기 대응, 연주될 악기 종류 (0~127: 기본 128 가지 선택가능)
 
@@ -57,7 +30,7 @@ int bn4 = 65; //버튼4의  note(음계)  가령 "파"
 int bn5 = 67; //버튼5의  note(음계)  가령 "솔"
 int bn6 = 69; //버튼6의  note(음계)  가령 "라"
 int bn7 = 71; //버튼7의  note(음계)  가령 "시"
-int bn8 = 72; //버튼8의  note(음계)  가령 "도~"
+//int bn8 = 72; //버튼8의  note(음계)  가령 "도~"
 
 byte byteData;
 
@@ -85,24 +58,6 @@ void setup() {
   digitalWrite( btn3, HIGH);
   pinMode( btn4, INPUT);
   digitalWrite( btn4, HIGH);
-  pinMode( btn5, INPUT);
-  digitalWrite( btn5, HIGH);
-  pinMode( btn6, INPUT);
-  digitalWrite( btn6, HIGH);
-  pinMode( btn7, INPUT);
-  digitalWrite( btn7, HIGH);
-  pinMode( btn8, INPUT);
-  digitalWrite( btn8, HIGH);
-  
-  pinMode( btn9, INPUT);
-  digitalWrite( btn9, HIGH);
-  pinMode( btn10, INPUT);
-  digitalWrite( btn10, HIGH);
-  pinMode( btn11, INPUT);
-  digitalWrite( btn11, HIGH);  
-  pinMode( btn12, INPUT);
-  digitalWrite( btn12, HIGH);  
-
 }
 
 void loop() {
@@ -110,74 +65,108 @@ void loop() {
     br2 = digitalRead(btn2);
     br3 = digitalRead(btn3);
     br4 = digitalRead(btn4);
-    br5 = digitalRead(btn5);
-    br6 = digitalRead(btn6);
-    br7 = digitalRead(btn7);
-    br8 = digitalRead(btn8);
-    br9 = digitalRead(btn9);
-    br10 = digitalRead(btn10);
-    br11 = digitalRead(btn11);
-    br12 = digitalRead(btn12);    
-    
-   if( !bs1 && !br1 ){
-     noteOn(0, bn1,100);
-     bs1 = true;
-   }else if(bs1 && br1){
-     noteOff(0, bn1,0);   
+    //G(솔)코드 버튼 2,3,4입력
+    if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && bs1 && br1){
+     noteOn(0, bn5,100);
      bs1 = false;
-   }
-   if( !bs2 && !br2 ){
-     noteOn(0, bn2,100);
      bs2 = true;
-   }else if(bs2 && br2){
-     noteOff(0, bn2,0);   
-
-     bs2 = false;
-   }   
-   if( !bs3 && !br3 ){
-     noteOn(0, bn3,100);
      bs3 = true;
-   }else if(bs3 && br3){
-     noteOff(0, bn3,0);   
-     bs3 = false;
-   }
-   if( !bs4 && !br4 ){
-     noteOn(0, bn4,100);
      bs4 = true;
-   }else if(bs4 && br4){
-     noteOff(0, bn4,0);   
+   }else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && !bs1 && !br1){
+     noteOff(0, bn5,0);   
+     bs1 = true;
+     bs2 = false;
+     bs3 = false;
      bs4 = false;
    }
-   if( !bs5 && !br5 ){
-     noteOn(0, bn5,100);
-     bs5 = true;
-   }else if(bs5 && br5){
-     noteOff(0, bn5,0);   
-     bs5 = false;
-   }   
-   if( !bs6 && !br6 ){
+    //A(라)코드 버튼 2,1 입력
+   if( bs4 && br4 && bs3 && br3 && !bs2 && !br2 && !bs1 && !br1){
      noteOn(0, bn6,100);
-     bs6 = true;
-   }else if(bs6 && br6){
+     bs1 = true;
+     bs2 = true;
+     bs3 = false;
+     bs4 = false;
+   }
+   else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
      noteOff(0, bn6,0);   
-     bs6 = false;
+     bs1 = false;
+     bs2 = false;
+     bs3 = true;
+     bs4 = true;
    }   
-   
-   if( !bs7 && !br7 ){
+   //B(시)코드 버튼 1,2,3,4 입력
+   if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
      noteOn(0, bn7,100);
-     bs7 = true;
-   }else if(bs7 && br7){
+     bs1 = true;
+     bs2 = true;
+     bs3 = true;
+     bs4 = true;
+   }else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
      noteOff(0, bn7,0);   
-     bs7 = false;
-   }   
-   if( !bs8 && !br8 ){
-     noteOn(0, bn8,100);
-     bs8 = true;
-   }else if(bs8 && br8){
-     noteOff(0, bn8,0);   
-     bs8 = false;
+     bs1 = false;
+     bs2 = false;
+     bs3 = false;
+     bs4 = false;
+   }
+   //C(도)코드 버튼 4 입력
+   if( !bs4 && !br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
+     noteOn(0, bn1,100);
+     bs1 = false;
+     bs2 = false;
+     bs3 = false;
+     bs4 = true;
+   }else if( bs4 && br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
+     noteOff(0, bn1,0);   
+     bs1 = true;
+     bs2 = true;
+     bs3 = true;
+     bs4 = false;
+   }
+   //D(레)코드 버튼 1,2,3 입력
+   if( bs4 && br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
+     noteOn(0, bn2,100);
+     bs1 = true;
+     bs2 = true;
+     bs3 = true;
+     bs4 = false;
+   }else if( !bs4 && !br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
+     noteOff(0, bn2,0);   
+     bs1 = false;
+     bs2 = false;
+     bs3 = false;
+     bs4 = true;
+   }
+   //E(미)코드 버튼 3 입력
+   if( bs4 && br4 && !bs3 && !br3 && bs2 && br2 && bs1 && br1){
+     noteOn(0, bn3,100);
+     bs1 = false;
+     bs2 = false;
+     bs3 = true;
+     bs4 = false;
+   }else if( !bs4 && !br4 && bs3 && br3 && !bs2 !&& br2 && !bs1 && !br1){
+     noteOff(0, bn3,0);   
+     bs1 = true;
+     bs2 = true;
+     bs3 = false;
+     bs4 = true;
+   }
+   //F(파)코드  버튼 1,3입력  
+   if( bs4 && br4 && !bs3 && !br3 && bs2 && br2 && !bs1 && !br1){
+     noteOn(0, bn4,100);
+     bs1 = true;
+     bs2 = false;
+     bs3 = true;
+     bs4 = false;
+   }else if( !bs4 && !br4 && bs3 && br3 && !bs2 && !br2 && bs1 && br1){
+     noteOff(0, bn4,0);   
+     bs1 = false;
+     bs2 = true;
+     bs3 = false;
+     bs4 = true;
    }   
    
+      
+  /* 
    if( !bs9 && !br9 ){ //patch up (max:127)
      patch++;
      if(patch >127) patch = 0;
@@ -214,7 +203,7 @@ void loop() {
      bs12 = true;
    }else if(bs12 && br12){
      bs12 = false;
-   }   
+   }   */
             
 
   //*************** MIDI LOOPBACK ******************//
