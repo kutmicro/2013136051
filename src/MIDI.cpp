@@ -1,36 +1,36 @@
 #include <SoftwareSerial.h>
-#define btn1  11  // ¹öÆ°1ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-#define btn2  10  // ¹öÆ°2ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-#define btn3  9   // ¹öÆ°3ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-#define btn4  8   // ¹öÆ°4ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-#define defaultPatch 15 //¾Ç±â ÃÊ±âÈ­ ¹öÆ° ¼³Á¤ ¾Ç±â¹øÈ£
+#define btn1  11  // ë²„íŠ¼1ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define btn2  10  // ë²„íŠ¼2ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define btn3  9   // ë²„íŠ¼3ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define btn4  8   // ë²„íŠ¼4ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define defaultPatch 15 //ì•…ê¸° ì´ˆê¸°í™” ë²„íŠ¼ ì„¤ì • ì•…ê¸°ë²ˆí˜¸
 
-SoftwareSerial mySerial(2, 3); //SW½Ã¸®¾óÇÉ Á¤ÀÇ D3ÀÌ MIDI½ÅÈ£ Àü¼Û¿ë,  D2´Â ¹Ì»ç¿ë 
+SoftwareSerial mySerial(2, 3); //SWì‹œë¦¬ì–¼í•€ ì •ì˜ D3ì´ MIDIì‹ í˜¸ ì „ì†¡ìš©,  D2ëŠ” ë¯¸ì‚¬ìš© 
 
-byte note = 0; //The MIDI¿¬ÁÖµÉ note(À½°è)
-byte resetMIDI = 4; // VS1053 Reset¿ë ÇÉ
-byte ledPin = 13; //MIDI Æ®·¡ÇÈ Ç¥½Ã¿ë LED
+byte note = 0; //The MIDIì—°ì£¼ë  note(ìŒê³„)
+byte resetMIDI = 4; // VS1053 Resetìš© í•€
+byte ledPin = 13; //MIDI íŠ¸ë˜í”½ í‘œì‹œìš© LED
  
-boolean bs1 = false;  // ¹öÆ°1ÀÇ ÇöÀç»óÅÂ(´­¸² or ¾È´­¸²)
-boolean bs2 = false;  // ÀÌÇÏ, À§¿Í À¯»ç
+boolean bs1 = false;  // ë²„íŠ¼1ì˜ í˜„ì¬ìƒíƒœ(ëˆŒë¦¼ or ì•ˆëˆŒë¦¼)
+boolean bs2 = false;  // ì´í•˜, ìœ„ì™€ ìœ ì‚¬
 boolean bs3 = false;
 boolean bs4 = false;
 
-boolean br1;  // ¹öÆ°1 »óÅÂ È®ÀÎ¿ë ÀÔ·Â°ª ÀÓ½ÃÀúÀå¿ë
-boolean br2;  // ÀÌÇÏ, À§¿Í À¯»ç
+boolean br1;  // ë²„íŠ¼1 ìƒíƒœ í™•ì¸ìš© ì…ë ¥ê°’ ì„ì‹œì €ì¥ìš©
+boolean br2;  // ì´í•˜, ìœ„ì™€ ìœ ì‚¬
 boolean br3;
 boolean br4;
 
-int patch = 0; //¾Ç±â ´ëÀÀ, ¿¬ÁÖµÉ ¾Ç±â Á¾·ù (0~127: ±âº» 128 °¡Áö ¼±ÅÃ°¡´É)
+int patch = 0; //ì•…ê¸° ëŒ€ì‘, ì—°ì£¼ë  ì•…ê¸° ì¢…ë¥˜ (0~127: ê¸°ë³¸ 128 ê°€ì§€ ì„ íƒê°€ëŠ¥)
 
-int bn1 = 60; //¹öÆ°1ÀÇ  note(À½°è)  °¡·É "µµ"  0~127±îÁö ÁöÁ¤°¡´É (Á¤È®ÇÑ À½°è ¼³Á¤Àº MIDI°ü·ÃÁ¤º¸Âü°í)
-int bn2 = 62; //¹öÆ°2ÀÇ  note(À½°è)  °¡·É "·¹"
-int bn3 = 64; //¹öÆ°3ÀÇ  note(À½°è)  °¡·É "¹Ì"
-int bn4 = 65; //¹öÆ°4ÀÇ  note(À½°è)  °¡·É "ÆÄ"
-int bn5 = 67; //¹öÆ°5ÀÇ  note(À½°è)  °¡·É "¼Ö"
-int bn6 = 69; //¹öÆ°6ÀÇ  note(À½°è)  °¡·É "¶ó"
-int bn7 = 71; //¹öÆ°7ÀÇ  note(À½°è)  °¡·É "½Ã"
-//int bn8 = 72; //¹öÆ°8ÀÇ  note(À½°è)  °¡·É "µµ~"
+int c = 60; //ë²„íŠ¼1ì˜  note(ìŒê³„)  ê°€ë ¹ "ë„"  0~127ê¹Œì§€ ì§€ì •ê°€ëŠ¥ (ì •í™•í•œ ìŒê³„ ì„¤ì •ì€ MIDIê´€ë ¨ì •ë³´ì°¸ê³ )
+int d = 62; //ë²„íŠ¼2ì˜  note(ìŒê³„)  ê°€ë ¹ "ë ˆ"
+int e = 64; //ë²„íŠ¼3ì˜  note(ìŒê³„)  ê°€ë ¹ "ë¯¸"
+int f = 65; //ë²„íŠ¼4ì˜  note(ìŒê³„)  ê°€ë ¹ "íŒŒ"
+int g = 67; //ë²„íŠ¼5ì˜  note(ìŒê³„)  ê°€ë ¹ "ì†”"
+int a = 69; //ë²„íŠ¼6ì˜  note(ìŒê³„)  ê°€ë ¹ "ë¼"
+int b = 71; //ë²„íŠ¼7ì˜  note(ìŒê³„)  ê°€ë ¹ "ì‹œ"
+//int bn8 = 72; //ë²„íŠ¼8ì˜  note(ìŒê³„)  ê°€ë ¹ "ë„~"
 
 byte byteData;
 
@@ -41,21 +41,21 @@ void talkMIDI(byte cmd, byte data1, byte data2);
 void setup() {
 	Serial.begin(31250);
 
-	//¹ÌµğÄÁÆ®·ÑÀ» À§ÇÑ ¼ÒÇÁÆ®¿ş¾î ½Ã¸®¾óÀ» ÁØºñÇÕ´Ï´Ù.
+	//ë¯¸ë””ì»¨íŠ¸ë¡¤ì„ ìœ„í•œ ì†Œí”„íŠ¸ì›¨ì–´ ì‹œë¦¬ì–¼ì„ ì¤€ë¹„í•©ë‹ˆë‹¤.
 	mySerial.begin(31250);
 	//mySerial2.begin(57600);
   
-	//VS1053¸¦ ÃÊ±âÈ­ÇÏ°í »ç¿ëÇÒ ÁØºñ¸¦ ÇÕ´Ï´Ù.
+	//VS1053ë¥¼ ì´ˆê¸°í™”í•˜ê³  ì‚¬ìš©í•  ì¤€ë¹„ë¥¼ í•©ë‹ˆë‹¤.
 	pinMode(resetMIDI, OUTPUT);
 	digitalWrite(resetMIDI, LOW);
 	delay(100);
 	digitalWrite(resetMIDI, HIGH);
 	delay(100);
   
-	pinMode( btn1, INPUT);      // ¹öÆ°1 ÀÔ·Â¿ë ÇÉ¸ğµå¸¦  ÀÔ·Â¸ğµå·Î ÀüÈ¯
-	digitalWrite( btn1, HIGH);  // ³»ºÎ PullUp ¼³Á¤, ½ºÀ§Ä¡ÀÇ ³ª¸ÓÁö ÇÑ¼±Àº GND¿¡ ¹°¸®¸é µË´Ï´Ù.(ÃÊ°£´Ü)
+	pinMode( btn1, INPUT);      // ë²„íŠ¼1 ì…ë ¥ìš© í•€ëª¨ë“œë¥¼  ì…ë ¥ëª¨ë“œë¡œ ì „í™˜
+	digitalWrite( btn1, HIGH);  // ë‚´ë¶€ PullUp ì„¤ì •, ìŠ¤ìœ„ì¹˜ì˜ ë‚˜ë¨¸ì§€ í•œì„ ì€ GNDì— ë¬¼ë¦¬ë©´ ë©ë‹ˆë‹¤.(ì´ˆê°„ë‹¨)
 
-	pinMode( btn2, INPUT);      // ÀÌÇÏ, À§¿Í À¯»ç
+	pinMode( btn2, INPUT);      // ì´í•˜, ìœ„ì™€ ìœ ì‚¬
 	digitalWrite( btn2, HIGH);
   
 	pinMode( btn3, INPUT);
@@ -69,100 +69,100 @@ void loop() {
     br2 = digitalRead(btn2);
     br3 = digitalRead(btn3);
     br4 = digitalRead(btn4);
-    //G(¼Ö)ÄÚµå ¹öÆ° 2,3,4ÀÔ·Â
+    //G(ì†”)ì½”ë“œ ë²„íŠ¼ 2,3,4ì…ë ¥
     if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && bs1 && br1){
-		noteOn(0, bn5,100);
+		noteOn(0, g,100);
 		bs1 = false;
 		bs2 = true;
 		bs3 = true;
 		bs4 = true;
 	}else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && !bs1 && !br1){
-		noteOff(0, bn5,0);   
+		noteOff(0, g,0);   
 		bs1 = true;
 		bs2 = false;
 		bs3 = false;
 		bs4 = false;
 	}
-    //A(¶ó)ÄÚµå ¹öÆ° 2,1 ÀÔ·Â
+    //A(ë¼)ì½”ë“œ ë²„íŠ¼ 2,1 ì…ë ¥
 	if( bs4 && br4 && bs3 && br3 && !bs2 && !br2 && !bs1 && !br1){
-		noteOn(0, bn6,100);
+		noteOn(0, a,100);
 		bs1 = true;
 		bs2 = true;
 		bs3 = false;
 		bs4 = false;
 	}
 	else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
-		noteOff(0, bn6,0);   
+		noteOff(0, a,0);   
 		bs1 = false;
 		bs2 = false;
 		bs3 = true;
 		bs4 = true;
 	}   
-   //B(½Ã)ÄÚµå ¹öÆ° 1,2,3,4 ÀÔ·Â
+   //B(ì‹œ)ì½”ë“œ ë²„íŠ¼ 1,2,3,4 ì…ë ¥
 	if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
-		noteOn(0, bn7,100);
+		noteOn(0, b,100);
 		bs1 = true;
 		bs2 = true;
 		bs3 = true;
 		bs4 = true;
 	}else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
-		noteOff(0, bn7,0);   
+		noteOff(0, b,0);   
 		bs1 = false;
 		bs2 = false;
 		bs3 = false;
 		bs4 = false;
 	}
-	//C(µµ)ÄÚµå ¹öÆ° 4 ÀÔ·Â
+	//C(ë„)ì½”ë“œ ë²„íŠ¼ 4 ì…ë ¥
 	if( !bs4 && !br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
-		noteOn(0, bn1,100);
+		noteOn(0, c,100);
 		bs1 = false;
 		bs2 = false;
 		bs3 = false;
 		bs4 = true;
 	} else if( bs4 && br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
-		noteOff(0, bn1,0);   
+		noteOff(0, c,0);   
 		bs1 = true;
 		bs2 = true;
 		bs3 = true;
 		bs4 = false;
 	}
-	//D(·¹)ÄÚµå ¹öÆ° 1,2,3 ÀÔ·Â
+	//D(ë ˆ)ì½”ë“œ ë²„íŠ¼ 1,2,3 ì…ë ¥
 	if( bs4 && br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
-		noteOn(0, bn2,100);
+		noteOn(0, d,100);
 		bs1 = true;
 		bs2 = true;
 		bs3 = true;
 		bs4 = false;
 	} else if( !bs4 && !br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
-		noteOff(0, bn2,0);   
+		noteOff(0, d,0);   
 		bs1 = false;
 		bs2 = false;
 		bs3 = false;
 		bs4 = true;
 	}
-	//E(¹Ì)ÄÚµå ¹öÆ° 3 ÀÔ·Â
+	//E(ë¯¸)ì½”ë“œ ë²„íŠ¼ 3 ì…ë ¥
 	if( bs4 && br4 && !bs3 && !br3 && bs2 && br2 && bs1 && br1){
-		noteOn(0, bn3,100);
+		noteOn(0, e,100);
 		bs1 = false;
 		bs2 = false;
 		bs3 = true;
 		bs4 = false;
 	}else if( !bs4 && !br4 && bs3 && br3 && !bs2 && !br2 && !bs1 && !br1){
-		noteOff(0, bn3,0);   
+		noteOff(0, e,0);   
 		bs1 = true;
 		bs2 = true;
 		bs3 = false;
 		bs4 = true;
 	}
-	//F(ÆÄ)ÄÚµå  ¹öÆ° 1,3ÀÔ·Â  
+	//F(íŒŒ)ì½”ë“œ  ë²„íŠ¼ 1,3ì…ë ¥  
 	if( bs4 && br4 && !bs3 && !br3 && bs2 && br2 && !bs1 && !br1){
-		noteOn(0, bn4,100);
+		noteOn(0, f,100);
 		bs1 = true;
 		bs2 = false;
 		bs3 = true;
 		bs4 = false;
 	} else if( !bs4 && !br4 && bs3 && br3 && !bs2 && !br2 && bs1 && br1){
-		noteOff(0, bn4,0);   
+		noteOff(0, f,0);   
 		bs1 = false;
 		bs2 = true;
 		bs3 = false;
@@ -215,12 +215,12 @@ if( !bs12 && !br12 ){
 		mySerial.write( byteData);
 	}  
 }
-//³ëÆ® ¿Â ¹Ìµğ ¸Ş¼¼Áö¸¦ ¼ÛÃâÇÕ´Ï´Ù. ¹öÆ°ÀÌ ´­¸°»óÅÂ¿Í °°½À´Ï´Ù.
-//Ã¤³Î ¹üÀ§´Â 0-15 ÀÔ´Ï´Ù.
+//ë…¸íŠ¸ ì˜¨ ë¯¸ë”” ë©”ì„¸ì§€ë¥¼ ì†¡ì¶œí•©ë‹ˆë‹¤. ë²„íŠ¼ì´ ëˆŒë¦°ìƒíƒœì™€ ê°™ìŠµë‹ˆë‹¤.
+//ì±„ë„ ë²”ìœ„ëŠ” 0-15 ì…ë‹ˆë‹¤.
 void noteOn(byte channel, byte note, byte attack_velocity) {
 	talkMIDI( (0x90 | channel), note, attack_velocity);
 }
-//³ëÆ® ¿ÀÇÁ ¹Ìµğ ¸Ş¼¼Áö¸¦ ¼ÛÃâÇÕ´Ï´Ù. ¹öÆ°ÀÌ ´­¸®Áö ¾ÊÀº »óÅÂ¿Í °°½À´Ï´Ù.
+//ë…¸íŠ¸ ì˜¤í”„ ë¯¸ë”” ë©”ì„¸ì§€ë¥¼ ì†¡ì¶œí•©ë‹ˆë‹¤. ë²„íŠ¼ì´ ëˆŒë¦¬ì§€ ì•Šì€ ìƒíƒœì™€ ê°™ìŠµë‹ˆë‹¤.
 void noteOff(byte channel, byte note, byte release_velocity) {
 	talkMIDI( (0x80 | channel), note, release_velocity);
 }
@@ -229,7 +229,7 @@ void talkMIDI(byte cmd, byte data1, byte data2) {
 	mySerial.write(cmd );
 	mySerial.write(data1 );
 
-	//¸ğµç ¸í·ÉÀº 1¹ÙÀÌÆ®¸¦ Áö´Ï¸ç, ¸ğµç cmds´Â   0xBnº¸´Ù  2 µ¥ÀÌÅÍ ¹ÙÀÌÆ®¸¦ ´ú Áö´Õ´Ï´Ù.  
+	//ëª¨ë“  ëª…ë ¹ì€ 1ë°”ì´íŠ¸ë¥¼ ì§€ë‹ˆë©°, ëª¨ë“  cmdsëŠ”   0xBnë³´ë‹¤  2 ë°ì´í„° ë°”ì´íŠ¸ë¥¼ ëœ ì§€ë‹™ë‹ˆë‹¤.  
 	//(sort of: http://253.ccarh.org/handout/midiprotocol/)
 	if( (cmd & 0xF0) <= 0xB0)
 		mySerial.write(data2 );
