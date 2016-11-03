@@ -9,7 +9,7 @@ SoftwareSerial mySerial(2, 3); //SW시리얼핀 정의 D3이 MIDI신호 전송�
 
 byte note = 0; //The MIDI연주될 note(음계)
 byte resetMIDI = 4; // VS1053 Reset용 핀
-byte ledPin = 13; //MIDI 트래픽 표시용 LED
+//byte ledPin = 13; //MIDI 트래픽 표시용 LED
  
 boolean bs1 = false;  // 버튼1의 현재상태(눌림 or 안눌림)
 boolean bs2 = false;  // 이하, 위와 유사
@@ -233,5 +233,5 @@ void talkMIDI(byte cmd, byte data1, byte data2) {
 	//(sort of: http://253.ccarh.org/handout/midiprotocol/)
 	if( (cmd & 0xF0) <= 0xB0)
 		mySerial.write(data2 );
-// digitalWrite(ledPin, LOW);
+	// digitalWrite(ledPin, LOW);
 }
