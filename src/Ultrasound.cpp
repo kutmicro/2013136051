@@ -1,50 +1,32 @@
-//Ãâ·ÂÇÉ(trig)°ú ÀÔ·ÂÇÉ(echo) ¿¬°á ¼³Á¤, ´Ù¸¥ ÇÉÀ» ¿¬°áÇØµµ µÊ.
-int trigPin1 = 7;
-int echoPin1 = 6;
-int trigPin2 = 5;
-int echoPin2 = 4;
+//ì¶œë ¥í•€(trig)ê³¼ ì…ë ¥í•€(echo) ì—°ê²° ì„¤ì •, ë‹¤ë¥¸ í•€ì„ ì—°ê²°í•´ë„ ë¨.
+int trigPin = 7;
+int echoPin = 6;
 
-//½Ã¸®¾ó ¼Óµµ¼³Á¤, trigPinÀ» Ãâ·Â, echoPinÀ» ÀÔ·ÂÀ¸·Î ¼³Á¤
+//ì‹œë¦¬ì–¼ ì†ë„ì„¤ì •, trigPinì„ ì¶œë ¥, echoPinì„ ì…ë ¥ìœ¼ë¡œ ì„¤ì •
 void setup(){
   Serial.begin(9600);
-  pinMode(trigPin1, OUTPUT);
-  pinMode(echoPin1, INPUT);
-  
-  pinMode(trigPin2, OUTPUT);
-  pinMode(echoPin2, INPUT);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 }
  
-//ÃÊÀ½ÆÄ¸¦ º¸³½´Ù. ´Ù º¸³»¸é echo°¡ HIGH(½ÅÈ£¹Ş±â) »óÅÂ·Î ´ë±â
+//ì´ˆìŒíŒŒë¥¼ ë³´ë‚¸ë‹¤. ë‹¤ ë³´ë‚´ë©´ echoê°€ HIGH(ì‹ í˜¸ë°›ê¸°) ìƒíƒœë¡œ ëŒ€ê¸°
 void loop(){
-  float duration1, distance1;
-  float duration2, distance2;
-  digitalWrite(trigPin1, HIGH);
+  float duration, distance;
+  
+  digitalWrite(trigPin, HIGH);
   delay(10);
-  digitalWrite(trigPin1, LOW);
-
-  digitalWrite(trigPin2, HIGH);
-  delay(10);
-  digitalWrite(trigPin2, LOW);
+  digitalWrite(trigPin, LOW);
  
-  // echoPin ÀÌ HIGH¸¦ À¯ÁöÇÑ ½Ã°£À» ÀúÀå ÇÑ´Ù.
-  duration1 = pulseIn(echoPin1, HIGH);
-  duration2 = pulseIn(echoPin2, HIGH);
-  // HIGH ¿´À» ¶§ ½Ã°£(ÃÊÀ½ÆÄ°¡ º¸³Â´Ù°¡ ´Ù½Ã µé¾î¿Â ½Ã°£)À» °¡Áö°í °Å¸®¸¦ °è»ê ÇÑ´Ù.
-  // 340Àº ÃÊ´ç ÃÊÀ½ÆÄ(¼Ò¸®)ÀÇ ¼Óµµ, 10000Àº ¹Ğ¸®¼¼ÄÁµå¸¦ ¼¼ÄÁµå·Î, ¿Õº¹°Å¸®ÀÌ¹Ç·Î 2·Î ³ª´²ÁØ´Ù.
-  distance1 = ((float)(340 * duration1) / 10000) / 2;
-  distance2 = ((float)(340 * duration2) / 10000) / 2;
-  //½Ã¸®¾ó¸ğ´ÏÅÍ¿¡ Echo°¡ HIGHÀÎ ½Ã°£ ¹× °Å¸®¸¦ Ç¥½ÃÇØÁØ´Ù.
-  Serial.print("Duration1:");
-  Serial.print(duration1);
-  Serial.print("\nDIstance1:");
-  Serial.print(distance1);
-  Serial.println("cm\n");
-  delay(500);
-
-  Serial.print("Duration2:");
-  Serial.print(duration2);
-  Serial.print("\nDIstance2:");
-  Serial.print(distance2);
+  // echoPin ì´ HIGHë¥¼ ìœ ì§€í•œ ì‹œê°„ì„ ì €ì¥ í•œë‹¤.
+  duration = pulseIn(echoPin, HIGH);
+  // HIGH ì˜€ì„ ë•Œ ì‹œê°„(ì´ˆìŒíŒŒê°€ ë³´ëƒˆë‹¤ê°€ ë‹¤ì‹œ ë“¤ì–´ì˜¨ ì‹œê°„)ì„ ê°€ì§€ê³  ê±°ë¦¬ë¥¼ ê³„ì‚° í•œë‹¤.
+  // 340ì€ ì´ˆë‹¹ ì´ˆìŒíŒŒ(ì†Œë¦¬)ì˜ ì†ë„, 10000ì€ ë°€ë¦¬ì„¸ì»¨ë“œë¥¼ ì„¸ì»¨ë“œë¡œ, ì™•ë³µê±°ë¦¬ì´ë¯€ë¡œ 2ë¡œ ë‚˜ëˆ ì¤€ë‹¤.
+  distance = ((float)(340 * duration) / 10000) / 2;
+  //ì‹œë¦¬ì–¼ëª¨ë‹ˆí„°ì— Echoê°€ HIGHì¸ ì‹œê°„ ë° ê±°ë¦¬ë¥¼ í‘œì‹œí•´ì¤€ë‹¤.
+  Serial.print("Duration:");
+  Serial.print(duration);
+  Serial.print("\nDIstance:");
+  Serial.print(distance);
   Serial.println("cm\n");
   delay(500);
 }
