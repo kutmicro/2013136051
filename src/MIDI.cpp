@@ -9,7 +9,7 @@ SoftwareSerial mySerial(2, 3); //SW시리얼핀 정의 D3이 MIDI신호 전송�
 
 byte note = 0; //The MIDI연주될 note(음계)
 byte resetMIDI = 4; // VS1053 Reset용 핀
-//byte ledPin = 13; //MIDI 트래픽 표시용 LED
+byte ledPin = 13; //MIDI 트래픽 표시용 LED
  
 boolean bs1 = false;  // 버튼1의 현재상태(눌림 or 안눌림)
 boolean bs2 = false;  // 이하, 위와 유사
@@ -54,10 +54,8 @@ void setup() {
   
 	pinMode( btn1, INPUT);      // 버튼1 입력용 핀모드를  입력모드로 전환
 	digitalWrite( btn1, HIGH);  // 내부 PullUp 설정, 스위치의 나머지 한선은 GND에 물리면 됩니다.(초간단)
-
 	pinMode( btn2, INPUT);      // 이하, 위와 유사
 	digitalWrite( btn2, HIGH);
-  
 	pinMode( btn3, INPUT);
 	digitalWrite( btn3, HIGH);
 	pinMode( btn4, INPUT);
@@ -66,11 +64,11 @@ void setup() {
 
 void loop() {
 	br1 = digitalRead(btn1);
-    br2 = digitalRead(btn2);
-    br3 = digitalRead(btn3);
-    br4 = digitalRead(btn4);
-    //G(솔)코드 버튼 2,3,4입력
-    if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && bs1 && br1){
+    	br2 = digitalRead(btn2);
+    	br3 = digitalRead(btn3);
+    	br4 = digitalRead(btn4);
+    	//G(솔)코드 버튼 2,3,4입력
+    	if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && bs1 && br1){
 		noteOn(0, g,100);
 		bs1 = false;
 		bs2 = true;
@@ -83,7 +81,7 @@ void loop() {
 		bs3 = false;
 		bs4 = false;
 	}
-    //A(라)코드 버튼 2,1 입력
+    	//A(라)코드 버튼 2,1 입력
 	if( bs4 && br4 && bs3 && br3 && !bs2 && !br2 && !bs1 && !br1){
 		noteOn(0, a,100);
 		bs1 = true;
@@ -98,7 +96,7 @@ void loop() {
 		bs3 = true;
 		bs4 = true;
 	}   
-   //B(시)코드 버튼 1,2,3,4 입력
+   	//B(시)코드 버튼 1,2,3,4 입력
 	if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
 		noteOn(0, b,100);
 		bs1 = true;
@@ -206,8 +204,6 @@ if( !bs12 && !br12 ){
 }else if(bs12 && br12){
   bs12 = false;
 }   */
-            
-
 	//*************** MIDI LOOPBACK ******************//
 	if(Serial.available() > 0)
 	{
@@ -225,7 +221,7 @@ void noteOff(byte channel, byte note, byte release_velocity) {
 	talkMIDI( (0x80 | channel), note, release_velocity);
 }
 void talkMIDI(byte cmd, byte data1, byte data2) {
-	//digitalWrite(ledPin, HIGH);
+	digitalWrite(ledPin, HIGH);
 	mySerial.write(cmd );
 	mySerial.write(data1 );
 
@@ -233,5 +229,5 @@ void talkMIDI(byte cmd, byte data1, byte data2) {
 	//(sort of: http://253.ccarh.org/handout/midiprotocol/)
 	if( (cmd & 0xF0) <= 0xB0)
 		mySerial.write(data2 );
-	// digitalWrite(ledPin, LOW);
+	digitalWrite(ledPin, LOW);
 }
