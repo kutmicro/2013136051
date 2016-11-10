@@ -55,7 +55,7 @@ void setup() {
 	pinMode( btn1, INPUT);      // 버튼1 입력용 핀모드를  입력모드로 전환
 	digitalWrite( btn1, HIGH);  // 내부 PullUp 설정, 스위치의 나머지 한선은 GND에 물리면 됩니다.(초간단)
 	pinMode( btn2, INPUT);      // 이하, 위와 유사
-	digitalWrite( btn2, HIGH);
+	digitalWrite( btn2, HIGH);  // 버튼을 누르지 않았을때 플로팅 상태가 되기 때문에 0과 1을 완전히 구분시켜주기 위하여 내부 풀업저항을 사용한다.
 	pinMode( btn3, INPUT);
 	digitalWrite( btn3, HIGH);
 	pinMode( btn4, INPUT);
@@ -68,13 +68,13 @@ void loop() {
     	br3 = digitalRead(btn3);
     	br4 = digitalRead(btn4);
     	//G(솔)코드 버튼 2,3,4입력
-    	if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && bs1 && br1){
+    	if( (!bs4 && !br4) && (!bs3 && !br3) && (!bs2 && !br2) && (bs1 && br1) ){
 		noteOn(0, g,100);
 		bs1 = false;
 		bs2 = true;
 		bs3 = true;
 		bs4 = true;
-	}else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && !bs1 && !br1){
+	}else if( (bs4 && br4) && (bs3 && br3) && (bs2 && br2) && (!bs1 && !br1) ){
 		noteOff(0, g,0);   
 		bs1 = true;
 		bs2 = false;
@@ -82,14 +82,14 @@ void loop() {
 		bs4 = false;
 	}
     	//A(라)코드 버튼 2,1 입력
-	if( bs4 && br4 && bs3 && br3 && !bs2 && !br2 && !bs1 && !br1){
+	if( (bs4 && br4) && (bs3 && br3) && (!bs2 && !br2) && (!bs1 && !br1) ){
 		noteOn(0, a,100);
 		bs1 = true;
 		bs2 = true;
 		bs3 = false;
 		bs4 = false;
 	}
-	else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
+	else if( (bs4 && br4) && (bs3 && br3) && (bs2 && br2) && (bs1 && br1) ){
 		noteOff(0, a,0);   
 		bs1 = false;
 		bs2 = false;
@@ -97,13 +97,13 @@ void loop() {
 		bs4 = true;
 	}   
    	//B(시)코드 버튼 1,2,3,4 입력
-	if( !bs4 && !br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
+	if( (!bs4 && !br4) && (!bs3 && !br3) && (!bs2 && !br2) && (!bs1 && !br1) ){
 		noteOn(0, b,100);
 		bs1 = true;
 		bs2 = true;
 		bs3 = true;
 		bs4 = true;
-	}else if( bs4 && br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
+	}else if( (bs4 && br4) && (bs3 && br3) && (bs2 && br2) && (bs1 && br1) ){
 		noteOff(0, b,0);   
 		bs1 = false;
 		bs2 = false;
@@ -111,13 +111,13 @@ void loop() {
 		bs4 = false;
 	}
 	//C(도)코드 버튼 4 입력
-	if( !bs4 && !br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
+	if( (!bs4 && !br4) && (bs3 && br3) && (bs2 && br2) && (bs1 && br1) ){
 		noteOn(0, c,100);
 		bs1 = false;
 		bs2 = false;
 		bs3 = false;
 		bs4 = true;
-	} else if( bs4 && br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
+	} else if( (bs4 && br4) && (!bs3 && !br3) && (!bs2 && !br2) && (!bs1 && !br1) ){
 		noteOff(0, c,0);   
 		bs1 = true;
 		bs2 = true;
@@ -125,13 +125,13 @@ void loop() {
 		bs4 = false;
 	}
 	//D(레)코드 버튼 1,2,3 입력
-	if( bs4 && br4 && !bs3 && !br3 && !bs2 && !br2 && !bs1 && !br1){
+	if( (bs4 && br4) && (!bs3 && !br3) && (!bs2 && !br2) && (!bs1 && !br1) ){
 		noteOn(0, d,100);
 		bs1 = true;
 		bs2 = true;
 		bs3 = true;
 		bs4 = false;
-	} else if( !bs4 && !br4 && bs3 && br3 && bs2 && br2 && bs1 && br1){
+	} else if( (!bs4 && !br4) && (bs3 && br3) && (bs2 && br2) && (bs1 && br1) ){
 		noteOff(0, d,0);   
 		bs1 = false;
 		bs2 = false;
@@ -139,13 +139,13 @@ void loop() {
 		bs4 = true;
 	}
 	//E(미)코드 버튼 3 입력
-	if( bs4 && br4 && !bs3 && !br3 && bs2 && br2 && bs1 && br1){
+	if( (bs4 && br4) && (!bs3 && !br3) && (bs2 && br2) && (bs1 && br1) ){
 		noteOn(0, e,100);
 		bs1 = false;
 		bs2 = false;
 		bs3 = true;
 		bs4 = false;
-	}else if( !bs4 && !br4 && bs3 && br3 && !bs2 && !br2 && !bs1 && !br1){
+	}else if( (!bs4 && !br4) && (bs3 && br3) && (!bs2 && !br2) && (!bs1 && !br1) ){
 		noteOff(0, e,0);   
 		bs1 = true;
 		bs2 = true;
@@ -153,13 +153,13 @@ void loop() {
 		bs4 = true;
 	}
 	//F(파)코드  버튼 1,3입력  
-	if( bs4 && br4 && !bs3 && !br3 && bs2 && br2 && !bs1 && !br1){
+	if( (bs4 && br4) && (!bs3 && !br3) && (bs2 && br2) && (!bs1 && !br1) ){
 		noteOn(0, f,100);
 		bs1 = true;
 		bs2 = false;
 		bs3 = true;
 		bs4 = false;
-	} else if( !bs4 && !br4 && bs3 && br3 && !bs2 && !br2 && bs1 && br1){
+	} else if( (!bs4 && !br4) && (bs3 && br3) && (!bs2 && !br2) && (bs1 && br1) ){
 		noteOff(0, f,0);   
 		bs1 = false;
 		bs2 = true;
