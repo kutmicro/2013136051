@@ -3,13 +3,13 @@
 #define laz3 5
 #define laz4 4
 
-boolean ls1 = false;   // ¹öÆ°1ÀÇ ÇöÀç»óÅÂ(´­¸² or ¾È´­¸²)
-boolean ls2 = false;   // ÀÌÇÏ, À§¿Í À¯»ç
+boolean ls1 = false;   // ë²„íŠ¼1ì˜ í˜„ìž¬ìƒíƒœ(ëˆŒë¦¼ or ì•ˆëˆŒë¦¼)
+boolean ls2 = false;   // ì´í•˜, ìœ„ì™€ ìœ ì‚¬
 boolean ls3 = false;
 boolean ls4 = false;
 
-boolean lr1;           // ¹öÆ°1 »óÅÂ È®ÀÎ¿ë ÀÔ·Â°ª ÀÓ½ÃÀúÀå¿ë
-boolean lr2;           // ÀÌÇÏ, À§¿Í À¯»ç
+boolean lr1;           // ë²„íŠ¼1 ìƒíƒœ í™•ì¸ìš© ìž…ë ¥ê°’ ìž„ì‹œì €ìž¥ìš©
+boolean lr2;           // ì´í•˜, ìœ„ì™€ ìœ ì‚¬
 boolean lr3;
 boolean lr4;
 
@@ -18,16 +18,16 @@ int sensVal2 = 0;
 int sensVal3 = 0;
 int sensVal4 = 0;
 
-int ln1 = 60;         //¹öÆ°1ÀÇ  note(À½°è)  °¡·É "µµ"  0~127±îÁö ÁöÁ¤°¡´É 
-int ln2 = 62;         //¹öÆ°2ÀÇ  note(À½°è)  °¡·É "·¹"
-int ln3 = 64;         //¹öÆ°3ÀÇ  note(À½°è)  °¡·É "¹Ì"
-int ln4 = 65;         //¹öÆ°4ÀÇ  note(À½°è)  °¡·É "ÆÄ"
+int ln1 = 60;         //ë²„íŠ¼1ì˜  note(ìŒê³„)  ê°€ë ¹ "ë„"  0~127ê¹Œì§€ ì§€ì •ê°€ëŠ¥ 
+int ln2 = 62;         //ë²„íŠ¼2ì˜  note(ìŒê³„)  ê°€ë ¹ "ë ˆ"
+int ln3 = 64;         //ë²„íŠ¼3ì˜  note(ìŒê³„)  ê°€ë ¹ "ë¯¸"
+int ln4 = 65;         //ë²„íŠ¼4ì˜  note(ìŒê³„)  ê°€ë ¹ "íŒŒ"
 
 void setup() {
 	Serial.begin(9600);
 
 	pinMode( laz1, INPUT);  
-	digitalWrite( laz1, HIGH);  // ³»ºÎ PullUp ¼³Á¤, ½ºÀ§Ä¡ÀÇ ³ª¸ÓÁö ÇÑ¼±Àº GND¿¡ ¹°¸²
+	digitalWrite( laz1, HIGH);  // ë‚´ë¶€ PullUp ì„¤ì •, ìŠ¤ìœ„ì¹˜ì˜ ë‚˜ë¨¸ì§€ í•œì„ ì€ GNDì— ë¬¼ë¦¼
 
 
 	pinMode( laz2, INPUT);
@@ -40,48 +40,48 @@ void setup() {
 	digitalWrite( laz4, HIGH);
 }
 void loop() {
-   //¹öÆ° »óÅÂ È®ÀÎ¿ë ÀÔ·Â°ª ÀÓ½ÃÀúÀå¿ë
+   //ë²„íŠ¼ ìƒíƒœ í™•ì¸ìš© ìž…ë ¥ê°’ ìž„ì‹œì €ìž¥ìš©
     sensVal1 = analogRead(laz1);
     sensVal2 = analogRead(laz2);
     sensVal3 = analogRead(laz3);
     sensVal4 = analogRead(laz4);
-//Á¶µµ¼¾¼­°¡ ºûÀ» ¹ÞÀ¸¸é °ªÀÌ ÀÛ¾ÆÁø´Ù. (¼öÁ¤ ) 
+//ì¡°ë„ì„¼ì„œê°€ ë¹›ì„ ë°›ìœ¼ë©´ ê°’ì´ ìž‘ì•„ì§„ë‹¤. (ìˆ˜ì • ) 
 	if(!ls1 && sensVal1 >= 100){
-		noteOn(0, ln1,100);
+		//noteOn(0, ln1,100);
 		ls1 = true;
 	}
 	else if(ls1 && sensVal1 < 100){
-		noteOff(0, ln1,0); 
+		//noteOff(0, ln1,0); 
 		ls1 = false;
 	}
 	Serial.print(sensVal1);
 	Serial.print("\t");
    
 	if( !ls2 && sensVal2 >= 100 ){
-		noteOn(0, ln2,100);
+		//noteOn(0, ln2,100);
 		ls2 = true;
 	}else if(ls2 && sensVal2 < 100){
-		noteOff(0, ln2,0);   
+		//noteOff(0, ln2,0);   
 		ls2 = false;
 	}   
 	Serial.print(sensVal2);
 	Serial.print("\t"); 
    
 	if( !ls3 && sensVal3 >= 100 ){
-		noteOn(0, ln3,100);
+		//noteOn(0, ln3,100);
 		ls3 = true;
 	}else if(ls3 && sensVal3 < 100){
-		noteOff(0, ln3,0);   
+		//noteOff(0, ln3,0);   
 		ls3 = false;
 	}
 	Serial.print(sensVal3);
 	Serial.print("\t");
     
 	if( !ls4 && sensVal4 >= 100){
-		noteOn(0, ln4,100);
+		//noteOn(0, ln4,100);
 		ls4 = true;
 	}else if(ls4 && sensVal4 < 100){
-		noteOff(0, ln4,0);   
+		//noteOff(0, ln4,0);   
 		ls4 = false;
 	}
 	Serial.print(sensVal4);
