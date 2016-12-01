@@ -25,11 +25,15 @@ int lazVal2 = 0;
 int lazVal3 = 0;
 int lazVal4 = 0;
 int patch = 0; //악기 대응, 연주될 악기 종류 (0~127: 기본 128 가지 선택가능)
+int check = 0;
 
-int bn1 = 60; //버튼1의  note(음계)  가령 "도"  0~127까지 지정가능 (정확한 음계 설정은 MIDI관련정보참고)
-int bn2 = 62; //버튼2의  note(음계)  가령 "레"
-int bn3 = 64; //버튼3의  note(음계)  가령 "미"
-int bn4 = 65; //버튼4의  note(음계)  가령 "파"
+int note60 = 60; //버튼1의  note(음계)  가령 "도"  0~127까지 지정가능 (정확한 음계 설정은 MIDI관련정보참고)
+int note62 = 62; //버튼2의  note(음계)  가령 "레"
+int note64 = 64; //버튼3의  note(음계)  가령 "미"
+int note65 = 65; //버튼4의  note(음계)  가령 "파"
+int note67 = 67; //버튼4의  note(음계)  가령 "솔"
+int note69 = 69; //버튼4의  note(음계)  가령 "라"
+int note71 = 71; //버튼4의  note(음계)  가령 "시"
 
 byte byteData;
 
@@ -60,6 +64,9 @@ void loop() {
 	br4 = digitalRead(btn4);
 
 	lazVal1 = analogRead(laz1); //read analog 
+	lazVal2 = analogRead(laz2); //read analog 
+	lazVal3 = analogRead(laz3); //read analog 
+	lazVal4 = analogRead(laz4); //read analog 
 	check = setNote1(br1) + setNote2(br2) + setNote3(br3) + setNote4(br4);
 	/*  
 	if(setNote1(br1, lazVal) == 59 || setNote1(br2, lazVal) == 59 || (br3, lazVal) == 59 || setNote1(br4, lazVal) == 59) {
@@ -69,7 +76,7 @@ void loop() {
 	Serial.print("default");
 	Serial.print("\n");
 	}  */ 
-	if(lazVal < 900) {
+	if(lazVal1 < 900) {
 		if(check==1000) {
 			noteOn(0, note60, 100);
 			delay(500);
