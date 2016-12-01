@@ -38,9 +38,9 @@ int note71 = 71; //버튼4의  note(음계)  가령 "시"
 byte byteData;
 
 void setup() {
-	Serial.begin(31250);
+	Serial.begin(38400);
 	//미디컨트롤을 위한 소프트웨어 시리얼을 준비합니다.
-	mySerial.begin(31250);
+	mySerial.begin(38400);
 	//VS1053를 초기화하고 사용할 준비를 합니다.
 	pinMode(resetMIDI, OUTPUT);
 	digitalWrite(resetMIDI, LOW);
@@ -67,6 +67,10 @@ void loop() {
 	lazVal2 = analogRead(laz2); //read analog 
 	lazVal3 = analogRead(laz3); //read analog 
 	lazVal4 = analogRead(laz4); //read analog 
+	Serial.println(lazVal1);
+	Serial.println(lazVal2);
+	Serial.println(lazVal3);
+	Serial.println(lazVal4);
 	check = setNote1(br1) + setNote2(br2) + setNote3(br3) + setNote4(br4);
 	/*  
 	if(setNote1(br1, lazVal) == 59 || setNote1(br2, lazVal) == 59 || (br3, lazVal) == 59 || setNote1(br4, lazVal) == 59) {
@@ -76,7 +80,7 @@ void loop() {
 	Serial.print("default");
 	Serial.print("\n");
 	}  */ 
-	if(lazVal1 < 900) {
+	if(lazVal1 < 900 || lazVal2 < 900 || lazVal3 < 900 || lazVal4 < 900) {
 		if(check==1000) {
 			noteOn(0, note60, 100);
 			delay(500);
