@@ -10,11 +10,6 @@ SoftwareSerial mySerial(2, 3); //SW시리얼핀 정의 D3이 MIDI신호 전송�
 byte note = 0; //The MIDI연주될 note(음계)
 byte resetMIDI = 4; // VS1053 Reset용 핀
 byte ledPin = 13; //MIDI 트래픽 표시용 LED
- 
-boolean bs1 = false;  // 버튼1의 현재상태(눌림 or 안눌림)
-boolean bs2 = false;  // 이하, 위와 유사
-boolean bs3 = false;
-boolean bs4 = false;
 
 boolean br1;  // 버튼1 상태 확인용 입력값 임시저장용
 boolean br2;  // 이하, 위와 유사
@@ -27,9 +22,9 @@ int bn1 = 60; //버튼1의  note(음계)  가령 "도"  0~127까지 지정가능
 int bn2 = 62; //버튼2의  note(음계)  가령 "레"
 int bn3 = 64; //버튼3의  note(음계)  가령 "미"
 int bn4 = 65; //버튼4의  note(음계)  가령 "파"
-int bn5 = 67; //버튼4의  note(음계)  가령 "파"
-int bn6 = 69; //버튼4의  note(음계)  가령 "파"
-int bn7 = 71; //버튼4의  note(음계)  가령 "파"
+int bn5 = 67; //버튼4의  note(음계)  가령 "솔"
+int bn6 = 69; //버튼4의  note(음계)  가령 "라"
+int bn7 = 71; //버튼4의  note(음계)  가령 "시"
 
 byte byteData;
  int setNote1(boolean ls1){
