@@ -73,10 +73,6 @@ void loop() {
   lazVal2 = analogRead(laz2); //read analog 
   lazVal3 = analogRead(laz3); //read analog 
   lazVal4 = analogRead(laz4); //read analog 
-  Serial.println(lazVal1);
-  Serial.println(lazVal2);
-  Serial.println(lazVal3);
-  Serial.println(lazVal4);
 
   digitalWrite(trigPin, HIGH);
   delay(10);
@@ -145,7 +141,11 @@ void loop() {
   delay(50);
 }
 int setVelocity(int distance) {
-    return (int)(100 - (distance / 30 * 70) + 30);
+  int vel = (int)((distance / 30.0 * 50) + 50);
+  if (vel >= 100) {
+    vel = 100;
+  }
+  return vel;
 }
 int setNote1(boolean bnt) {
   if (bnt == true)
