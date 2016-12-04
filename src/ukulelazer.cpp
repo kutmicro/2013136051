@@ -1,184 +1,192 @@
 #include <SoftwareSerial.h>
-#define btn1  11  // ¹öÆ°1ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-#define btn2  10  // ¹öÆ°2ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-#define btn3  9   // ¹öÆ°3ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-#define btn4  8   // ¹öÆ°4ÀÇ ¾ÆµÎÀÌ³ë ÇÉ¹øÈ£ Á¤ÀÇ
-// 3:midi rx , 4:midi reset  ¾ÆµÎÀÌ³ë ÇÉ 3¹ø 4¹øÀº ÀÌ¹Ì »ç¿ëÁß
-#define laz1 A0
-#define laz2 A1
-#define laz3 A2
-#define laz4 A3
+#define btn1  11  //ë²„íŠ¼1ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define btn2  10  //ë²„íŠ¼2ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define btn3  9   //ë²„íŠ¼3ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define btn4  8   //ë²„íŠ¼4ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+// 3:midi rx , 4:midi reset  ì•„ë‘ì´ë…¸ í•€ 3ë²ˆ 4ë²ˆì€ ì´ë¯¸ ì‚¬ìš©ì¤‘
+#define laz1 A0   //ì¡°ë„ì„¼ì„œ1ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define laz2 A1   //ì¡°ë„ì„¼ì„œ2ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define laz3 A2   //ì¡°ë„ì„¼ì„œ3ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define laz4 A3   //ì¡°ë„ì„¼ì„œ4ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define trigPin 7 //ì¶œë ¥í•€ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+#define echoPin 6 //ì…ë ¥í•€ì˜ ì•„ë‘ì´ë…¸ í•€ë²ˆí˜¸ ì •ì˜
+SoftwareSerial mySerial(2, 3); //SWì‹œë¦¬ì–¼í•€ ì •ì˜ D3ì´ MIDIì‹ í˜¸ ì „ì†¡ìš©,  D2ëŠ” ë¯¸ì‚¬ìš© 
 
-SoftwareSerial mySerial(2, 3); //SW½Ã¸®¾óÇÉ Á¤ÀÇ D3ÀÌ MIDI½ÅÈ£ Àü¼Û¿ë,  D2´Â ¹Ì»ç¿ë 
+byte note = 0;      //The MIDIì—°ì£¼ë  note(ìŒê³„)
+byte resetMIDI = 4; //VS1053 Resetìš© í•€
+byte ledPin = 13;   //MIDI íŠ¸ë˜í”½ í‘œì‹œìš© LED
 
-byte note = 0; //The MIDI¿¬ÁÖµÉ note(À½°è)
-byte resetMIDI = 4; // VS1053 Reset¿ë ÇÉ
-byte ledPin = 13; //MIDI Æ®·¡ÇÈ Ç¥½Ã¿ë LED
-
-boolean br1;  // ¹öÆ°1 »óÅÂ È®ÀÎ¿ë ÀÔ·Â°ª ÀÓ½ÃÀúÀå¿ë
-boolean br2;  // ÀÌÇÏ, À§¿Í À¯»ç
+boolean br1;    //ë²„íŠ¼1 ìƒíƒœ í™•ì¸ìš© ì…ë ¥ê°’ ì„ì‹œì €ì¥ìš©
+boolean br2;    //ì´í•˜, ìœ„ì™€ ìœ ì‚¬
 boolean br3;
 boolean br4;
+int lazVal1 = 0;  //ì¡°ë„ì„¼ì„œ1 ì—ì„œ ë°›ì€ AnalogRead ê°’
+int lazVal2 = 0;  //ì´í•˜, ìœ„ì™€ ìœ ì‚¬  
+int lazVal3 = 0;  
+int lazVal4 = 0;  
+float duration = 0;   //echoPinì´ HIGHë¥¼ ìœ ì§€í•œ ì‹œê°„ì„ ì €ì¥
+float distance = 0;   //ê±°ë¦¬ ê³„ì‚°
 
-int lazVal1 = 0;
-int lazVal2 = 0;
-int lazVal3 = 0;
-int lazVal4 = 0;
-int patch = 0; //¾Ç±â ´ëÀÀ, ¿¬ÁÖµÉ ¾Ç±â Á¾·ù (0~127: ±âº» 128 °¡Áö ¼±ÅÃ°¡´É)
-int check = 0;
-
-int note60 = 60; //¹öÆ°1ÀÇ  note(À½°è)  °¡·É "µµ"  0~127±îÁö ÁöÁ¤°¡´É (Á¤È®ÇÑ À½°è ¼³Á¤Àº MIDI°ü·ÃÁ¤º¸Âü°í)
-int note62 = 62; //¹öÆ°2ÀÇ  note(À½°è)  °¡·É "·¹"
-int note64 = 64; //¹öÆ°3ÀÇ  note(À½°è)  °¡·É "¹Ì"
-int note65 = 65; //¹öÆ°4ÀÇ  note(À½°è)  °¡·É "ÆÄ"
-int note67 = 67; //¹öÆ°4ÀÇ  note(À½°è)  °¡·É "¼Ö"
-int note69 = 69; //¹öÆ°4ÀÇ  note(À½°è)  °¡·É "¶ó"
-int note71 = 71; //¹öÆ°4ÀÇ  note(À½°è)  °¡·É "½Ã"
+int patch = 0;  //ì•…ê¸° ëŒ€ì‘, ì—°ì£¼ë  ì•…ê¸° ì¢…ë¥˜ (0~127: ê¸°ë³¸ 128 ê°€ì§€ ì„ íƒê°€ëŠ¥)
+int check = 0;  //ì–´ë–¤ ìŒì„ ì—°ì£¼í• ì§€ ê²°ì •í•  ë³€ìˆ˜
+//0~127ê¹Œì§€ ì§€ì •ê°€ëŠ¥ (ì •í™•í•œ ìŒê³„ ì„¤ì •ì€ MIDIê´€ë ¨ì •ë³´ì°¸ê³ )
+int note59 = 59; //note(ìŒê³„)  ê°€ë ¹ "ë‚®ì€ ì‹œ"
+int note60 = 60; //note(ìŒê³„)  ê°€ë ¹ "ë„"  
+int note62 = 62; //note(ìŒê³„)  ê°€ë ¹ "ë ˆ"
+int note64 = 64; //note(ìŒê³„)  ê°€ë ¹ "ë¯¸"
+int note65 = 65; //note(ìŒê³„)  ê°€ë ¹ "íŒŒ"
+int note67 = 67; //note(ìŒê³„)  ê°€ë ¹ "ì†”"
+int note69 = 69; //note(ìŒê³„)  ê°€ë ¹ "ë¼"
+int note71 = 71; //note(ìŒê³„)  ê°€ë ¹ "ì‹œ"
 
 byte byteData;
 
 void setup() {
-	Serial.begin(38400);
-	//¹ÌµğÄÁÆ®·ÑÀ» À§ÇÑ ¼ÒÇÁÆ®¿ş¾î ½Ã¸®¾óÀ» ÁØºñÇÕ´Ï´Ù.
-	mySerial.begin(38400);
-	//VS1053¸¦ ÃÊ±âÈ­ÇÏ°í »ç¿ëÇÒ ÁØºñ¸¦ ÇÕ´Ï´Ù.
-	pinMode(resetMIDI, OUTPUT);
-	digitalWrite(resetMIDI, LOW);
-	delay(100);
-	digitalWrite(resetMIDI, HIGH);
-	delay(100);
-
-	pinMode( btn1, INPUT);      // ¹öÆ°1 ÀÔ·Â¿ë ÇÉ¸ğµå¸¦  ÀÔ·Â¸ğµå·Î ÀüÈ¯
-	digitalWrite( btn1, HIGH);  // ³»ºÎ PullUp ¼³Á¤, ½ºÀ§Ä¡ÀÇ ³ª¸ÓÁö ÇÑ¼±Àº GND¿¡ ¹°¸®¸é µË´Ï´Ù.(ÃÊ°£´Ü)
-	pinMode( btn2, INPUT);      // ÀÌÇÏ, À§¿Í À¯»ç
-	digitalWrite( btn2, HIGH);
-	pinMode( btn3, INPUT);
-	digitalWrite( btn3, HIGH);
-	pinMode( btn4, INPUT);
-	digitalWrite( btn4, HIGH);
+  Serial.begin(38400);
+  //ë¯¸ë””ì»¨íŠ¸ë¡¤ì„ ìœ„í•œ ì†Œí”„íŠ¸ì›¨ì–´ ì‹œë¦¬ì–¼ì„ ì¤€ë¹„í•©ë‹ˆë‹¤.
+  mySerial.begin(38400);
+  //VS1053ë¥¼ ì´ˆê¸°í™”í•˜ê³  ì‚¬ìš©í•  ì¤€ë¹„ë¥¼ í•©ë‹ˆë‹¤.
+  pinMode(resetMIDI, OUTPUT);
+  digitalWrite(resetMIDI, LOW);
+  delay(100);
+  digitalWrite(resetMIDI, HIGH);
+  delay(100);
+  
+  pinMode( btn1, INPUT);      // ë²„íŠ¼1 ì…ë ¥ìš© í•€ëª¨ë“œë¥¼  ì…ë ¥ëª¨ë“œë¡œ ì „í™˜
+  digitalWrite( btn1, HIGH);  // ë‚´ë¶€ PullUp ì„¤ì •, ìŠ¤ìœ„ì¹˜ì˜ ë‚˜ë¨¸ì§€ í•œì„ ì€ GNDì— ë¬¼ë¦¬ë©´ ë©ë‹ˆë‹¤.(ì´ˆê°„ë‹¨)
+  pinMode( btn2, INPUT);      // ì´í•˜, ìœ„ì™€ ìœ ì‚¬
+  digitalWrite( btn2, HIGH);
+  pinMode( btn3, INPUT);
+  digitalWrite( btn3, HIGH);
+  pinMode( btn4, INPUT);
+  digitalWrite( btn4, HIGH);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 }
 void loop() {
-	br1 = digitalRead(btn1);
-	br2 = digitalRead(btn2);
-	br3 = digitalRead(btn3);
-	br4 = digitalRead(btn4);
+  br1 = digitalRead(btn1);
+  br2 = digitalRead(btn2);
+  br3 = digitalRead(btn3);
+  br4 = digitalRead(btn4);
 
-	lazVal1 = analogRead(laz1); //read analog 
-	lazVal2 = analogRead(laz2); //read analog 
-	lazVal3 = analogRead(laz3); //read analog 
-	lazVal4 = analogRead(laz4); //read analog 
-	Serial.println(lazVal1);
-	Serial.println(lazVal2);
-	Serial.println(lazVal3);
-	Serial.println(lazVal4);
-	check = setNote1(br1) + setNote2(br2) + setNote3(br3) + setNote4(br4);
-	/*  
-	if(setNote1(br1, lazVal) == 59 || setNote1(br2, lazVal) == 59 || (br3, lazVal) == 59 || setNote1(br4, lazVal) == 59) {
-	noteOn(0, 59, 100);
-	delay(500);
-	noteOff(0, 59, 0);
-	Serial.print("default");
-	Serial.print("\n");
-	}  */ 
-	if(lazVal1 < 900 || lazVal2 < 900 || lazVal3 < 900 || lazVal4 < 900) {
-		if(check==1000) {
-			noteOn(0, note60, 100);
-			delay(500);
-			noteOff(0, note60, 0);
-			Serial.println(1000);
-		}
-		else if(check==111){
-			noteOn(0, note62, 100);
-			delay(500);
-			noteOff(0, note62, 0);
-			Serial.println(111);
-		} 
-		else if(check==100){
-			noteOn(0, note64, 100);
-			delay(500);
-			noteOff(0, note64, 0);
-			Serial.println(100);
-		}
-		else if(check==101){
-			noteOn(0, note65,100);
-			delay(500);
-			noteOff(0, note65, 0);
-			Serial.println(101);
-		}
-		else if(check==1110){
-			noteOn(0, note67,100);
-			delay(500);
-			noteOff(0, note67, 0);
-			Serial.println(1110);
-		}
-		else if(check==11){
-			noteOn(0, note69,100);
-			delay(500);
-			noteOff(0, note69, 0);
-			Serial.println(11);
-		}
-		else if(check==1111){
-			noteOn(0, note71,100);
-			delay(500);
-			noteOff(0, note71, 0);
-			Serial.println(1111);
-		}
-		else if(check==0){ 
-			noteOn(0, 59, 100);
-			delay(500);
-			noteOff(0, 59, 0);
-			Serial.println(59);
-		}
-	}
-	if(Serial.available() > 0)
-	{
-		byteData =  Serial.read();
-		mySerial.write( byteData );
-	}  
-	delay(50);
+  lazVal1 = analogRead(laz1); //read analog 
+  lazVal2 = analogRead(laz2); //read analog 
+  lazVal3 = analogRead(laz3); //read analog 
+  lazVal4 = analogRead(laz4); //read analog 
+  Serial.println(lazVal1);
+  Serial.println(lazVal2);
+  Serial.println(lazVal3);
+  Serial.println(lazVal4);
+
+  digitalWrite(trigPin, HIGH);
+  delay(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = ((float)(340 * duration) / 10000) / 2;
+  
+  check = setNote1(br1) + setNote2(br2) + setNote3(br3) + setNote4(br4);
+  
+  if(lazVal1 < 900 || lazVal2 < 900 || lazVal3 < 900 || lazVal4 < 900) {
+    if(check==1000) {
+      noteOn(0, note60, setVelocity(distance));
+      delay(500);
+      noteOff(0, note60, 0);
+      Serial.println(1000);
+    }
+    else if(check==111){
+      noteOn(0, note62, setVelocity(distance));
+      delay(500);
+      noteOff(0, note62, 0);
+      Serial.println(111);
+    } 
+    else if(check==100){
+      noteOn(0, note64, setVelocity(distance));
+      delay(500);
+      noteOff(0, note64, 0);
+      Serial.println(100);
+    }
+    else if(check==101){
+      noteOn(0, note65, setVelocity(distance));
+      delay(500);
+      noteOff(0, note65, 0);
+      Serial.println(101);
+    }
+    else if(check==1110){
+      noteOn(0, note67, setVelocity(distance));
+      delay(500);
+      noteOff(0, note67, 0);
+      Serial.println(1110);
+    }
+    else if(check==11){
+      noteOn(0, note69, setVelocity(distance));
+      delay(500);
+      noteOff(0, note69, 0);
+      Serial.println(11);
+    }
+    else if(check==1111){
+      noteOn(0, note71, setVelocity(distance));
+      delay(500);
+      noteOff(0, note71, 0);
+      Serial.println(1111);
+    }
+    else if(check==0){ 
+      noteOn(0, 59, setVelocity(distance));
+      delay(500);
+      noteOff(0, 59, 0);
+      Serial.println(59);
+    }
+  }
+  if(Serial.available() > 0)
+  {
+    byteData =  Serial.read();
+    mySerial.write( byteData );
+  }  
+  delay(50);
+}
+int setVelocity(int distance) {
+    return (int)((distance / 30 * 70) + 30);
 }
 int setNote1(boolean bnt) {
-	if (bnt == true)
-		return 1;
-	else 
-		return 0;
+  if (bnt == true)
+    return 1;
+  else 
+    return 0;
 }
 int setNote2(boolean bnt) {
-	if (bnt == true)
-		return 10;
-	else 
-		return 0;
+  if (bnt == true)
+    return 10;
+  else 
+    return 0;
 }
 int setNote3(boolean bnt) {
-	if (bnt == true)
-		return 100;
-	else 
-		return 0;
+  if (bnt == true)
+    return 100;
+  else 
+    return 0;
 }
 int setNote4( boolean bnt) {
-	if (bnt == true)
-		return 1000;
-	else 
-		return 0;
+  if (bnt == true)
+    return 1000;
+  else 
+    return 0;
 }
-//³ëÆ® ¿Â ¹Ìµğ ¸Ş¼¼Áö¸¦ ¼ÛÃâÇÕ´Ï´Ù. ¹öÆ°ÀÌ ´­¸°»óÅÂ¿Í °°½À´Ï´Ù.
-//Ã¤³Î ¹üÀ§´Â 0-15 ÀÔ´Ï´Ù.
+//ë…¸íŠ¸ ì˜¨ ë¯¸ë”” ë©”ì„¸ì§€ë¥¼ ì†¡ì¶œí•©ë‹ˆë‹¤. ë²„íŠ¼ì´ ëˆŒë¦°ìƒíƒœì™€ ê°™ìŠµë‹ˆë‹¤.
+//ì±„ë„ ë²”ìœ„ëŠ” 0-15 ì…ë‹ˆë‹¤.
 void noteOn(byte channel, byte note, byte attack_velocity) {
-	talkMIDI( (0x90 | channel), note, attack_velocity);
+  talkMIDI( (0x90 | channel), note, attack_velocity);
 }
-
-//³ëÆ® ¿ÀÇÁ ¹Ìµğ ¸Ş¼¼Áö¸¦ ¼ÛÃâÇÕ´Ï´Ù. ¹öÆ°ÀÌ ´­¸®Áö ¾ÊÀº »óÅÂ¿Í °°½À´Ï´Ù.
+//ë…¸íŠ¸ ì˜¤í”„ ë¯¸ë”” ë©”ì„¸ì§€ë¥¼ ì†¡ì¶œí•©ë‹ˆë‹¤. ë²„íŠ¼ì´ ëˆŒë¦¬ì§€ ì•Šì€ ìƒíƒœì™€ ê°™ìŠµë‹ˆë‹¤.
 void noteOff(byte channel, byte note, byte release_velocity) {
-	talkMIDI( (0x80 | channel), note, release_velocity);
+  talkMIDI( (0x80 | channel), note, release_velocity);
 }
-
 void talkMIDI(byte cmd, byte data1, byte data2) {
-	digitalWrite(ledPin, HIGH);
-	mySerial.write(cmd );
-	mySerial.write(data1 );
+  digitalWrite(ledPin, HIGH);
+  mySerial.write(cmd );
+  mySerial.write(data1 );
 
-	if( (cmd & 0xF0) <= 0xB0)
-		mySerial.write(data2 );
+  if( (cmd & 0xF0) <= 0xB0)
+    mySerial.write(data2 );
 
-	digitalWrite(ledPin, LOW);
+  digitalWrite(ledPin, LOW);
 }
