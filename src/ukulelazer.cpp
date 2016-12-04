@@ -145,7 +145,7 @@ void loop() {
   delay(50);
 }
 int setVelocity(int distance) {
-    return (int)((distance / 30 * 70) + 30);
+    return (int)(100 - (distance / 30 * 70) + 30);
 }
 int setNote1(boolean bnt) {
   if (bnt == true)
@@ -165,7 +165,7 @@ int setNote3(boolean bnt) {
   else 
     return 0;
 }
-int setNote4( boolean bnt) {
+int setNote4(boolean bnt) {
   if (bnt == true)
     return 1000;
   else 
