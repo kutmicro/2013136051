@@ -10,8 +10,8 @@
 #define laz4 A3   //조도센서4의 아두이노 핀번호 정의
 #define trigPin 7 //출력핀의 아두이노 핀번호 정의
 #define echoPin 6 //입력핀의 아두이노 핀번호 정의
-SoftwareSerial mySerial(2, 3); //SW시리얼핀 정의 D3이 MIDI신호 전송용,  D2는 미사용 
-
+SoftwareSerial mySerial(2, 3); 
+//SW시리얼핀 정의 D3이 MIDI신호 전송용,  D2는 미사용 
 byte note = 0;      //The MIDI연주될 note(음계)
 byte resetMIDI = 4; //VS1053 Reset용 핀
 byte ledPin = 13;   //MIDI 트래픽 표시용 LED
@@ -20,34 +20,43 @@ boolean br1;    //버튼1 상태 확인용 입력값 임시저장용
 boolean br2;    //이하, 위와 유사
 boolean br3;
 boolean br4;
+
 int lazVal1 = 0;  //조도센서1 에서 받은 AnalogRead 값
 int lazVal2 = 0;  //이하, 위와 유사  
 int lazVal3 = 0;  
 int lazVal4 = 0;  
 float duration;   //echoPin이 HIGH를 유지한 시간을 저장
 float distance;   //거리 계산
-
-int patch = 0;  //악기 대응, 연주될 악기 종류 (0~127: 기본 128 가지 선택가능)
-int check = 0;  //어떤 음을 연주할지 결정할 변수
+int check = 0;    //버튼 입력에 따른 정수값 저장할 변수
 //0~127까지 지정가능 (정확한 음계 설정은 MIDI관련정보참고)
-int note59 = 59; //note(음계)  가령 "낮은 시"
-int note60 = 60; //note(음계)  가령 "도"  
-int note62 = 62; //note(음계)  가령 "레"
-int note64 = 64; //note(음계)  가령 "미"
-int note65 = 65; //note(음계)  가령 "파"
-int note67 = 67; //note(음계)  가령 "솔"
-int note69 = 69; //note(음계)  가령 "라"
-int note71 = 71; //note(음계)  가령 "시"
-int note72 = 72; //note(음계)  가령 "높은도"
+int note52 = 52; //note(음계) "낮은미"
+int note53 = 53; //note(음계) "낮은파"
+int note55 = 55; //note(음계) "낮은솔"
+int note57 = 57; //note(음계) "낮은라"
+int note59 = 59; //note(음계) "낮은시"
+int note60 = 60; //note(음계) "도"
+int note62 = 62; //note(음계) "레"
+int note64 = 64; //note(음계) "미"
+int note65 = 65; //note(음계) "파"
+int note67 = 67; //note(음계) "솔"
+int note69 = 69; //note(음계) "라"
+int note71 = 71; //note(음계) "시"
+int note72 = 72; //note(음계) "높은도"
+int note74 = 74; //note(음계) "높은레"
+int note76 = 76; //note(음계) "높은미"
+int note77 = 77; //note(음계) "높은파"
+int note79 = 79; //note(음계) "높은솔"
+int note81 = 81; //note(음계) "높은라"
+int note83 = 83; //note(음계) "높은시"
+int note84 = 84; //note(음계) "더높은도"
 
-byte byteData;
-
+byte byteData;  
 void setup() {
   Serial.begin(31250);
   //미디컨트롤을 위한 소프트웨어 시리얼을 준비합니다.
   mySerial.begin(31250);
   //VS1053를 초기화하고 사용할 준비를 합니다.
-  pinMode(resetMIDI, OUTPUT);
+  pinMode(resetMIDI, OUTPUT);   
   digitalWrite(resetMIDI, LOW);
   delay(100);
   digitalWrite(resetMIDI, HIGH);
@@ -63,6 +72,9 @@ void setup() {
   digitalWrite( btn4, HIGH);
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
+
+  //talkMIDI(0xB0, 3, 0x78);
+  talkMIDI(0xc0, 25, 0);        //악기 설정
 }
 void loop() {
   br1 = digitalRead(btn1);
@@ -74,10 +86,6 @@ void loop() {
   lazVal2 = analogRead(laz2); //read analog 
   lazVal3 = analogRead(laz3); //read analog 
   lazVal4 = analogRead(laz4); //read analog 
-//  Serial.println(lazVal1);
-//  Serial.println(lazVal2);
-//  Serial.println(lazVal3);
-//  Serial.println(lazVal4);
 
   digitalWrite(trigPin, HIGH);
   delay(10);
@@ -136,27 +144,74 @@ void loop() {
       Serial.println("높은도");
       delay(200);
       noteOff(note, note72, 0);
-    } 
-    else if(check==0 && lazVal4 > 100){ 
-      noteOn(0, 59, setVelocity(distance));
+    }
+    else if(check==1100){
+      noteOn(note, note74, 100);
+      Serial.println("높은레");
+      delay(200);
+      noteOff(note, note74,0);
+    }
+    else if(check==1101){
+      noteOn(note, note76, 100);
+      Serial.println("높은미");
+      delay(200);
+      noteOff(note, note76, 0);
+    }
+    else if(check==1001){
+      noteOn(note, note77, 100);
+      Serial.println("높은파");
+      delay(200);
+      noteOff(note, note77,0);
+    }
+    else if(check==1010){
+      noteOn(note, note79, 100);
+      Serial.println("높은솔");
+      delay(200);
+      noteOff(note, note79,0);
+    }
+    else if(check==1011){
+      noteOn(note, note81, 100);
+      Serial.println("높은라");
+      delay(200);
+      noteOff(note, note81, 0);
+    }
+    else if(check==101){
+      noteOn(note, note83, 100);
+      Serial.println("높은시");
+      delay(200);
+      noteOff(note, note83,0);
+    }
+    else if(check==110){
+      noteOn(note, note84, 100);
+      Serial.println("더높은도");
+      delay(200);
+      noteOff(note, note84, 0);
+    }
+    else if(check==0 && lazVal4 > 100 && lazVal3 < 100 && lazVal2 < 100 && lazVal1 < 100){ 
+      noteOn(note, note59, setVelocity(distance));
+      Serial.println("낮은시");
       delay(200);
       noteOff(0, 59, 0);
-      Serial.println(59);
-    } else if(check==0 && lazVal3 > 100){ 
-      noteOn(0, 57, setVelocity(distance));
+    } else if(check==0 && lazVal4 < 100 && lazVal3 > 100 && lazVal2 < 100 && lazVal1 < 100){ 
+      noteOn(note, note57, setVelocity(distance));
+      Serial.println("낮은라");
       delay(200);
-      noteOff(0, 57, 0);
-      Serial.println(57);
-    } else if(check==0 && lazVal2 > 100){ 
-      noteOn(0, 55, setVelocity(distance));
+      noteOff(note, note57, 0);
+    } else if(check==0 && lazVal4 < 100 && lazVal3 < 100 && lazVal2 > 100 && lazVal1 < 100){ 
+      noteOn(note, note55, setVelocity(distance));
+      Serial.println("낮은솔");
       delay(200);
-      noteOff(0, 55, 0);
-      Serial.println(55);
-    } else if(check==0 && lazVal1 > 100){ 
-      noteOn(0, 53, setVelocity(distance));
+      noteOff(note, note55, 0);
+    } else if(check==0 && lazVal4 < 100 && lazVal3 < 100 && lazVal2 < 100 && lazVal1 > 100){ 
+      noteOn(note, note53, setVelocity(distance));
+      Serial.println("낮은파");
       delay(200);
-      noteOff(0, 53, 0);
-      Serial.println(53);
+      noteOff(note, note53, 0);
+    } else { 
+      noteOn(note, note52, setVelocity(distance));
+      Serial.println("낮은미");
+      delay(200);
+      noteOff(note, note52, 0);
     }
   }
   if(Serial.available() > 0)
@@ -164,13 +219,8 @@ void loop() {
     byteData =  Serial.read();
     mySerial.write( byteData );
   }
-//  Serial.print("Duration:");
-//  Serial.print(duration);
-//  Serial.print("\nDIstance:");
-//  Serial.print(distance);
-//  Serial.println("cm\n");
   Serial.println(setVelocity(distance));  
-  delay(100);
+  delay(50);
 }
 int setVelocity(int distance) {
   int vel;
