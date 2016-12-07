@@ -24,8 +24,8 @@ int lazVal1 = 0;  //조도센서1 에서 받은 AnalogRead 값
 int lazVal2 = 0;  //이하, 위와 유사  
 int lazVal3 = 0;  
 int lazVal4 = 0;  
-float duration = 0;   //echoPin이 HIGH를 유지한 시간을 저장
-float distance = 0;   //거리 계산
+float duration;   //echoPin이 HIGH를 유지한 시간을 저장
+float distance;   //거리 계산
 
 int patch = 0;  //악기 대응, 연주될 악기 종류 (0~127: 기본 128 가지 선택가능)
 int check = 0;  //어떤 음을 연주할지 결정할 변수
@@ -38,13 +38,14 @@ int note65 = 65; //note(음계)  가령 "파"
 int note67 = 67; //note(음계)  가령 "솔"
 int note69 = 69; //note(음계)  가령 "라"
 int note71 = 71; //note(음계)  가령 "시"
+int note72 = 72; //note(음계)  가령 "높은도"
 
 byte byteData;
 
 void setup() {
-  Serial.begin(38400);
+  Serial.begin(31250);
   //미디컨트롤을 위한 소프트웨어 시리얼을 준비합니다.
-  mySerial.begin(38400);
+  mySerial.begin(31250);
   //VS1053를 초기화하고 사용할 준비를 합니다.
   pinMode(resetMIDI, OUTPUT);
   digitalWrite(resetMIDI, LOW);
@@ -73,6 +74,10 @@ void loop() {
   lazVal2 = analogRead(laz2); //read analog 
   lazVal3 = analogRead(laz3); //read analog 
   lazVal4 = analogRead(laz4); //read analog 
+//  Serial.println(lazVal1);
+//  Serial.println(lazVal2);
+//  Serial.println(lazVal3);
+//  Serial.println(lazVal4);
 
   digitalWrite(trigPin, HIGH);
   delay(10);
@@ -83,69 +88,101 @@ void loop() {
   
   check = setNote1(br1) + setNote2(br2) + setNote3(br3) + setNote4(br4);
   
-  if(lazVal1 < 900 || lazVal2 < 900 || lazVal3 < 900 || lazVal4 < 900) {
-    if(check==1000) {
-      noteOn(0, note60, setVelocity(distance));
-      delay(500);
-      noteOff(0, note60, 0);
-      Serial.println(1000);
+  if(lazVal1 > 100 || lazVal2 > 100 || lazVal3 > 100 || lazVal4 > 100) {
+    if(check==1000){
+      noteOn(note, note60, 100);
+      Serial.println("도");
+      delay(200);
+      noteOff(note, note60, 0);
     }
-    else if(check==111){
-      noteOn(0, note62, setVelocity(distance));
-      delay(500);
-      noteOff(0, note62, 0);
-      Serial.println(111);
-    } 
     else if(check==100){
-      noteOn(0, note64, setVelocity(distance));
-      delay(500);
-      noteOff(0, note64, 0);
-      Serial.println(100);
+      noteOn(note, note62,100);
+      Serial.println("레");
+      delay(200);
+      noteOff(note, note62,0);
+    } 
+    else if(check==10){
+      noteOn(note, note64,100);
+      Serial.println("미");
+      delay(200);
+      noteOff(note, note64,0);
     }
-    else if(check==101){
-      noteOn(0, note65, setVelocity(distance));
-      delay(500);
-      noteOff(0, note65, 0);
-      Serial.println(101);
-    }
-    else if(check==1110){
-      noteOn(0, note67, setVelocity(distance));
-      delay(500);
-      noteOff(0, note67, 0);
-      Serial.println(1110);
+    else if(check==1){
+      noteOn(note, note65,100);
+      Serial.println("파");
+      delay(200);
+      noteOff(note, note65,0);
     }
     else if(check==11){
-      noteOn(0, note69, setVelocity(distance));
-      delay(500);
-      noteOff(0, note69, 0);
-      Serial.println(11);
+      noteOn(note, note67,100);
+      Serial.println("솔");
+      delay(200);
+      noteOff(note, note67,0);
     }
+    else if(check==111){
+      noteOn(note, note69,100);
+      Serial.println("라");
+      delay(200);
+      noteOff(note, note69,0);
+    } 
     else if(check==1111){
-      noteOn(0, note71, setVelocity(distance));
-      delay(500);
-      noteOff(0, note71, 0);
-      Serial.println(1111);
-    }
-    else if(check==0){ 
+      noteOn(note, note71,100);
+      Serial.println("시");
+      delay(200);
+      noteOff(note, note71,0);
+    } 
+    else if(check==1110){
+      noteOn(note, note72, 100);
+      Serial.println("높은도");
+      delay(200);
+      noteOff(note, note72, 0);
+    } 
+    else if(check==0 && lazVal4 > 100){ 
       noteOn(0, 59, setVelocity(distance));
-      delay(500);
+      delay(200);
       noteOff(0, 59, 0);
       Serial.println(59);
+    } else if(check==0 && lazVal3 > 100){ 
+      noteOn(0, 57, setVelocity(distance));
+      delay(200);
+      noteOff(0, 57, 0);
+      Serial.println(57);
+    } else if(check==0 && lazVal2 > 100){ 
+      noteOn(0, 55, setVelocity(distance));
+      delay(200);
+      noteOff(0, 55, 0);
+      Serial.println(55);
+    } else if(check==0 && lazVal1 > 100){ 
+      noteOn(0, 53, setVelocity(distance));
+      delay(200);
+      noteOff(0, 53, 0);
+      Serial.println(53);
     }
   }
   if(Serial.available() > 0)
   {
     byteData =  Serial.read();
     mySerial.write( byteData );
-  }  
-  delay(50);
+  }
+//  Serial.print("Duration:");
+//  Serial.print(duration);
+//  Serial.print("\nDIstance:");
+//  Serial.print(distance);
+//  Serial.println("cm\n");
+  Serial.println(setVelocity(distance));  
+  delay(100);
 }
 int setVelocity(int distance) {
-  int vel = (int)((distance / 30.0 * 50) + 50);
-  if (vel >= 100) {
-    vel = 100;
+  int vel;
+  if(distance <= 18){
+    vel = (int)((distance / 18.0 * 50) + 60);
+    if (vel >= 100) {
+     return 100;
+    }
   }
-  return vel;
+  else
+    return 100;
+  return vel; 
 }
 int setNote1(boolean bnt) {
   if (bnt == true)
@@ -165,7 +202,7 @@ int setNote3(boolean bnt) {
   else 
     return 0;
 }
-int setNote4(boolean bnt) {
+int setNote4( boolean bnt) {
   if (bnt == true)
     return 1000;
   else 
